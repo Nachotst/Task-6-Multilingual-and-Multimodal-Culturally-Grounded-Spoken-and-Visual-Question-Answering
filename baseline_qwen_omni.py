@@ -39,6 +39,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+import torch
 from pathlib import Path
 
 REPO = "QCRI/MMCQA-SemEval27"
