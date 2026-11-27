@@ -25,7 +25,7 @@ Key observations:
   meaning of lanterns. BERTScore barely penalises that, so a manual error analysis is still needed.
 - The fine-tuned answers tend to be **shorter than the references**. 
 - **Five times more training data (v4) barely helps:** +0.002 F1 over v3 on the same 300 questions, which is not
-  statistically significant. See [Training on the full train set](#training-on-the-full-train-set-v4).
+  statistically significant.
 
 ### However
 
@@ -38,14 +38,14 @@ Key observations:
 ## Analysis of the fine-tuned model
 
 
-### Answer length and overlap
+### Answer length 
 
-| Variant | Mean words per answer | ROUGE-L | Word-overlap F1 |
-|---|---|---|---|
-| v0 baseline | 50.6 | 0.247 | 0.320 |
-| v1 baseline + post-processing | 31.6 | 0.331 | 0.411 |
-| **v3 fine-tuned** | **23.1** | **0.484** | **0.556** |
-| Reference answers | 25.2 | – | – |
+| Variant | Mean words per answer |
+|---|---|
+| v0 baseline | 50.6 |
+| v1 baseline + post-processing | 31.6 | 
+| **v3 fine-tuned** | **23.1** |
+| Reference answers | 25.2 |
 
 - The baseline answers are twice as long as the references. The fine-tuned model almost matches the reference
   length (1.14 vs 1.22 sentences per answer).
@@ -68,7 +68,7 @@ We read the 15 answers with the lowest word-overlap F1 by hand and found three e
 | **Correct but phrased differently** | Syrian opposition flags, port explosion, flute, currency exchange: correct in content, but shorter or worded differently from the reference. |
 
 **Conclusion:** Fine-tuning mainly improved the **form and style** of the answers (length, structure,
-phrasing). It added little **cultural knowledge**, which is expected with 2000 examples and a 3B model.
+phrasing). It added little **cultural knowledge**.
 Part of the low-scoring answers are actually correct, which shows a limitation of the overlap-based metrics
 rather than of the model.
 
@@ -135,8 +135,8 @@ sign of overfitting.
 
   
 
-**Conclusion:** more of the same data is not the bottleneck. Further gains are more likely from a larger model,
-from adding background knowledge (e.g. retrieval), or from better post-processing.
+**Conclusion:** more of the same data is not the bottleneck. Further gains are more likely
+from adding background knowledge, or from better post-processing.
 
 ## Next steps
 
@@ -145,12 +145,11 @@ Ordered by expected value for effort:
 1. **Manual evaluation.** Draw a random sample of about 50 answers and label each one as *correct*, *generic* or
    *wrong*. This measures factual accuracy, which BERTScore and ROUGE-L do not capture, and could show content
    differences between v3 and v4 that BERTScore hides.
-2. **Cheap post-processing fixes.** Add the removal of echoed instructions and repeated sentences to
-   `clean_answer` (+0.0007 on dev, see above).
+2. **Cheap post-processing fixes.**
 3. **Evaluate v2 and v3 on the full dev set** for exact like-for-like totals (`TRAIN = False`, `EVAL_LIMIT = None`,
    `EVAL_PROMPT_ONLY = True`, about 3 h each on a Kaggle T4).
-4. **Ablations.** Compare LoRA rank (8 / 16 / 32) and training-set size (500 / 1000 / 2000 / 9800) to show how much
+4. Compare LoRA rank (8 / 16 / 32) and training-set size (500 / 1000 / 2000 / 9800) to show how much
    data and capacity the gain actually needs. The v3/v4 result suggests that a few hundred items may already be
    enough for the style.
-5. **Bigger levers.** A larger base model (e.g. Qwen2.5-Omni-7B, needs more GPU memory) or retrieval of background
+5. **Other Backbone Model.** A larger base model (e.g. Qwen2.5-Omni-7B,Qwen2.5-VL). More
    knowledge for the "significance" questions.
